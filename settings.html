@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Cờ Caro - Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<style>
+body{font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent;min-height:max(884px,100dvh)}
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.custom-toggle:checked+.toggle-dot{transform:translateX(100%);background-color:#81B64C}
+.custom-toggle:checked~.toggle-bg{background-color:#2d5e2d}
+html.light{background:#f5f5f0;color:#151310}
+</style>
+<script id="tailwind-config">
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "secondary-container": "#3b6a00",
+        "background": "#151310",
+        "on-primary": "#04390c",
+        "error": "#ffb4ab",
+        "text-white": "#FFFFFF",
+        "secondary": "#9fd668",
+        "surface-variant": "#373431",
+        "outline-variant": "#41493f",
+        "action-green": "#81B64C",
+        "outline": "#8b9387",
+        "on-surface-variant": "#c1c9bc",
+        "surface-container-low": "#1e1b18",
+        "surface-bright": "#3c3935",
+        "surface-ebony": "#262421",
+        "surface-container-highest": "#373431",
+        "on-secondary-container": "#b1e978",
+        "on-primary-container": "#9fd698",
+        "surface-container": "#221f1c",
+        "on-background": "#e8e1dc",
+        "primary-container": "#2d5e2d",
+        "primary": "#9ed497",
+        "on-surface": "#e8e1dc",
+        "surface": "#151310"
+      },
+      borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+      spacing: { xl: "32px", lg: "24px", md: "16px", sm: "12px", xs: "8px", base: "4px", "container-max": "1280px" },
+      fontFamily: {
+        "body-lg": ["Inter"], "body-sm": ["Inter"], "display-lg": ["Inter"],
+        "label-caps": ["Inter"], "headline-lg-mobile": ["Inter"], "headline-lg": ["Inter"], "title-md": ["Inter"]
+      },
+      fontSize: {
+        "body-lg": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+        "body-sm": ["14px", { lineHeight: "20px", fontWeight: "400" }],
+        "display-lg": ["48px", { lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "700" }],
+        "label-caps": ["12px", { lineHeight: "16px", letterSpacing: "0.05em", fontWeight: "700" }],
+        "headline-lg-mobile": ["24px", { lineHeight: "32px", fontWeight: "700" }],
+        "headline-lg": ["32px", { lineHeight: "40px", fontWeight: "700" }],
+        "title-md": ["20px", { lineHeight: "28px", fontWeight: "600" }]
+      }
+    }
+  }
+}
+</script>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col">
+<header class="bg-surface-container shadow-sm w-full top-0 sticky z-50">
+<div class="flex justify-between items-center px-md py-sm max-w-container-max mx-auto h-16">
+<div class="flex items-center gap-4">
+<a href="index.html" class="transition-all duration-200 active:scale-95 text-primary"><span class="material-symbols-outlined">grid_4x4</span></a>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-action-green tracking-tighter">CÀI ĐẶT</h1>
+</div>
+<span class="text-on-surface-variant font-label-caps text-label-caps">PRO SETTINGS</span>
+</div>
+</header>
+<main class="flex-grow max-w-4xl mx-auto w-full px-md py-lg">
+<div class="bg-surface-container-low rounded-xl shadow-xl overflow-hidden border border-outline-variant/20">
+<div class="px-md py-lg bg-surface-bright/10 border-b border-outline-variant/30">
+<h2 class="font-headline-lg text-headline-lg mb-2">Settings</h2>
+<p class="text-on-surface-variant font-body-sm text-body-sm">Tùy chỉnh trải nghiệm Gomoku của bạn.</p>
+</div>
+<div class="flex flex-col">
+<div class="px-md py-sm bg-surface-container-high/40"><span class="font-label-caps text-label-caps text-secondary uppercase">Giao Diện</span></div>
+<div class="flex items-center justify-between px-md py-lg border-b border-outline-variant/10 hover:bg-surface-bright/5 transition-colors group">
+<div class="flex items-center gap-4">
+<div class="p-2 rounded-lg bg-surface-container-highest text-primary"><span class="material-symbols-outlined">dark_mode</span></div>
+<div><p class="font-title-md text-title-md">Dark Mode</p><p class="font-body-sm text-body-sm text-on-surface-variant">Chuyển đổi giữa giao diện sáng và tối</p></div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input id="toggle-theme" class="sr-only peer custom-toggle" type="checkbox"/>
+<div class="w-12 h-6 bg-surface-variant rounded-full peer toggle-bg transition-colors duration-200 border border-outline-variant"></div>
+<div class="absolute left-1 top-1 bg-on-surface-variant w-4 h-4 rounded-full transition-transform duration-200 toggle-dot"></div>
+</label>
+</div>
+<div class="px-md py-sm bg-surface-container-high/40"><span class="font-label-caps text-label-caps text-secondary uppercase">Âm Thanh</span></div>
+<div class="flex items-center justify-between px-md py-lg border-b border-outline-variant/10 hover:bg-surface-bright/5 transition-colors group">
+<div class="flex items-center gap-4">
+<div class="p-2 rounded-lg bg-surface-container-highest text-primary"><span class="material-symbols-outlined">volume_up</span></div>
+<div><p class="font-title-md text-title-md">Hiệu ứng âm thanh</p><p class="font-body-sm text-body-sm text-on-surface-variant">Âm thanh khi đặt quân cờ</p></div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input id="toggle-sound" class="sr-only peer custom-toggle" type="checkbox"/>
+<div class="w-12 h-6 bg-surface-variant rounded-full peer toggle-bg transition-colors duration-200 border border-outline-variant"></div>
+<div class="absolute left-1 top-1 bg-on-surface-variant w-4 h-4 rounded-full transition-transform duration-200 toggle-dot"></div>
+</label>
+</div>
+<div class="flex items-center justify-between px-md py-lg border-b border-outline-variant/10 hover:bg-surface-bright/5 transition-colors group">
+<div class="flex items-center gap-4">
+<div class="p-2 rounded-lg bg-surface-container-highest text-primary"><span class="material-symbols-outlined">music_note</span></div>
+<div><p class="font-title-md text-title-md">Nhạc nền</p><p class="font-body-sm text-body-sm text-on-surface-variant">Nhạc nền giúp tập trung khi chơi</p></div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input id="toggle-music" class="sr-only peer custom-toggle" type="checkbox"/>
+<div class="w-12 h-6 bg-surface-variant rounded-full peer toggle-bg transition-colors duration-200 border border-outline-variant"></div>
+<div class="absolute left-1 top-1 bg-on-surface-variant w-4 h-4 rounded-full transition-transform duration-200 toggle-dot"></div>
+</label>
+</div>
+<div class="px-md py-sm bg-surface-container-high/40"><span class="font-label-caps text-label-caps text-secondary uppercase">Gameplay</span></div>
+<div class="flex flex-col gap-4 px-md py-lg border-b border-outline-variant/10 hover:bg-surface-bright/5 transition-colors">
+<div class="flex items-center gap-4">
+<div class="p-2 rounded-lg bg-surface-container-highest text-primary"><span class="material-symbols-outlined">grid_view</span></div>
+<div><p class="font-title-md text-title-md">Kích thước bàn cờ</p><p class="font-body-sm text-body-sm text-on-surface-variant">Chọn kích thước lưới cho ván đấu</p></div>
+</div>
+<div class="grid grid-cols-2 gap-4 mt-2" id="board-size-group">
+<button data-size="15" class="board-size-btn relative flex items-center justify-between p-4 rounded-xl border-2 border-outline-variant bg-surface-container hover:border-primary/50 transition-all duration-200 active:scale-[0.98]">
+<div class="flex flex-col items-start"><span class="font-label-caps text-label-caps text-on-surface-variant">Standard</span><span class="font-headline-lg text-headline-lg text-on-surface">15x15</span></div>
+<div class="w-6 h-6 rounded-full border-2 border-outline-variant check-indicator"></div>
+</button>
+<button data-size="19" class="board-size-btn relative flex items-center justify-between p-4 rounded-xl border-2 border-outline-variant bg-surface-container hover:border-primary/50 transition-all duration-200 active:scale-[0.98]">
+<div class="flex flex-col items-start"><span class="font-label-caps text-label-caps text-on-surface-variant">Tournament</span><span class="font-headline-lg text-headline-lg text-on-surface">19x19</span></div>
+<div class="w-6 h-6 rounded-full border-2 border-outline-variant check-indicator"></div>
+</button>
+</div>
+</div>
+</div>
+<div class="p-md bg-surface-container-highest/20 flex justify-end gap-md">
+<button id="reset-defaults" class="px-lg py-sm rounded-lg font-title-md text-title-md text-on-surface-variant hover:bg-surface-variant transition-colors active:scale-95">Reset Defaults</button>
+<button id="save-settings" class="px-lg py-sm rounded-lg font-title-md text-title-md bg-action-green text-white shadow-lg border-b-4 border-[#2d5e2d] hover:brightness-110 active:border-b-0 active:translate-y-[4px] transition-all">Save Changes</button>
+</div>
+</div>
+</main>
+<div class="h-20"></div>
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 pb-safe bg-surface-container-highest border-t border-outline-variant shadow-md rounded-t-xl">
+<a href="index.html" class="flex flex-col items-center justify-center text-on-surface-variant active:scale-90 transition-transform duration-150"><span class="material-symbols-outlined">home</span><span class="font-label-caps text-label-caps">Home</span></a>
+<a href="game.html" class="flex flex-col items-center justify-center text-on-surface-variant active:scale-90 transition-transform duration-150"><span class="material-symbols-outlined">sports_esports</span><span class="font-label-caps text-label-caps">Play</span></a>
+<a href="settings.html" class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-4 py-1 active:scale-90 transition-transform duration-150"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">settings</span><span class="font-label-caps text-label-caps">Settings</span></a>
+<a href="help.html" class="flex flex-col items-center justify-center text-on-surface-variant active:scale-90 transition-transform duration-150"><span class="material-symbols-outlined">help</span><span class="font-label-caps text-label-caps">Help</span></a>
+</nav>
+<script>
+const DEFAULT_SETTINGS={theme:'dark',sound:true,music:false,boardSize:15};
+function loadSettings(){
+  try{return JSON.parse(localStorage.getItem('gomoku_settings'))||{...DEFAULT_SETTINGS};}
+  catch(e){return {...DEFAULT_SETTINGS};}
+}
+function saveSettings(s){localStorage.setItem('gomoku_settings',JSON.stringify(s));}
+function applyTheme(theme){
+  const html=document.documentElement;
+  if(theme==='light'){html.classList.remove('dark');html.classList.add('light');}
+  else{html.classList.add('dark');html.classList.remove('light');}
+}
+let settings=loadSettings();
+applyTheme(settings.theme);
+
+const toggleTheme=document.getElementById('toggle-theme');
+const toggleSound=document.getElementById('toggle-sound');
+const toggleMusic=document.getElementById('toggle-music');
+toggleTheme.checked=settings.theme==='dark';
+toggleSound.checked=settings.sound;
+toggleMusic.checked=settings.music;
+
+function updateBoardSizeUI(){
+  document.querySelectorAll('.board-size-btn').forEach(btn=>{
+    const indicator=btn.querySelector('.check-indicator');
+    const label=btn.querySelector('.font-label-caps');
+    if(parseInt(btn.dataset.size)===settings.boardSize){
+      btn.classList.remove('border-outline-variant','bg-surface-container');
+      btn.classList.add('border-primary','bg-primary-container/20');
+      indicator.classList.remove('border-2','border-outline-variant');
+      indicator.classList.add('bg-primary','flex','items-center','justify-center');
+      indicator.innerHTML='<span class="material-symbols-outlined text-on-primary text-[18px]" style="font-variation-settings:\'FILL\' 1">check_circle</span>';
+      label.classList.remove('text-on-surface-variant');
+      label.classList.add('text-primary');
+    }else{
+      btn.classList.add('border-outline-variant','bg-surface-container');
+      btn.classList.remove('border-primary','bg-primary-container/20');
+      indicator.classList.add('border-2','border-outline-variant');
+      indicator.classList.remove('bg-primary','flex','items-center','justify-center');
+      indicator.innerHTML='';
+      label.classList.add('text-on-surface-variant');
+      label.classList.remove('text-primary');
+    }
+  });
+}
+updateBoardSizeUI();
+
+document.querySelectorAll('.board-size-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    settings.boardSize=parseInt(btn.dataset.size);
+    updateBoardSizeUI();
+  });
+});
+
+toggleTheme.addEventListener('change',()=>{
+  settings.theme=toggleTheme.checked?'dark':'light';
+  applyTheme(settings.theme);
+});
+toggleSound.addEventListener('change',()=>{settings.sound=toggleSound.checked;});
+toggleMusic.addEventListener('change',()=>{settings.music=toggleMusic.checked;});
+
+document.getElementById('save-settings').addEventListener('click',()=>{
+  saveSettings(settings);
+  const btn=document.getElementById('save-settings');
+  const original=btn.textContent;
+  btn.textContent='Đã Lưu!';
+  setTimeout(()=>{btn.textContent=original;},1200);
+});
+
+document.getElementById('reset-defaults').addEventListener('click',()=>{
+  settings={...DEFAULT_SETTINGS};
+  saveSettings(settings);
+  applyTheme(settings.theme);
+  toggleTheme.checked=settings.theme==='dark';
+  toggleSound.checked=settings.sound;
+  toggleMusic.checked=settings.music;
+  updateBoardSizeUI();
+});
+</script>
+</body>
+</html>

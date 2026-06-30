@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Cờ Caro - Chơi</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "secondary-container": "#3b6a00",
+        "background": "#151310",
+        "on-primary": "#04390c",
+        "error": "#ffb4ab",
+        "text-white": "#FFFFFF",
+        "secondary": "#9fd668",
+        "board-dark": "#2D5E2D",
+        "surface-variant": "#373431",
+        "outline-variant": "#41493f",
+        "action-green": "#81B64C",
+        "action-red": "#E74C3C",
+        "outline": "#8b9387",
+        "on-surface-variant": "#c1c9bc",
+        "surface-container-low": "#1e1b18",
+        "surface-bright": "#3c3935",
+        "surface-ebony": "#262421",
+        "surface-container-highest": "#373431",
+        "on-secondary-container": "#b1e978",
+        "on-primary-container": "#9fd698",
+        "surface-container": "#221f1c",
+        "on-background": "#e8e1dc",
+        "primary-container": "#2d5e2d",
+        "board-light": "#EEEEEE",
+        "primary": "#9ed497",
+        "on-surface": "#e8e1dc",
+        "surface": "#151310"
+      },
+      borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+      spacing: { xl: "32px", lg: "24px", md: "16px", sm: "12px", xs: "8px", base: "4px", "container-max": "1280px" },
+      fontFamily: {
+        "body-lg": ["Inter"], "body-sm": ["Inter"], "display-lg": ["Inter"],
+        "label-caps": ["Inter"], "headline-lg": ["Inter"], "title-md": ["Inter"]
+      },
+      fontSize: {
+        "body-lg": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+        "body-sm": ["14px", { lineHeight: "20px", fontWeight: "400" }],
+        "display-lg": ["48px", { lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "700" }],
+        "label-caps": ["12px", { lineHeight: "16px", letterSpacing: "0.05em", fontWeight: "700" }],
+        "headline-lg": ["32px", { lineHeight: "40px", fontWeight: "700" }],
+        "title-md": ["20px", { lineHeight: "28px", fontWeight: "600" }]
+      }
+    }
+  }
+}
+</script>
+<style>
+body{min-height:max(884px,100dvh);font-family:'Inter',sans-serif}
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.board-grid{display:grid;background-color:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)}
+.board-cell{position:relative;border:.5px solid rgba(255,255,255,.1);transition:background-color .15s ease;cursor:pointer}
+.board-cell:hover{background-color:rgba(129,182,76,.15)}
+.board-cell.disabled{cursor:not-allowed}
+.piece{animation:piece-drop .2s cubic-bezier(.175,.885,.32,1.275) forwards;user-select:none}
+@keyframes piece-drop{0%{transform:scale(1.5);opacity:0}100%{transform:scale(1);opacity:1}}
+.last-move-indicator{position:absolute;inset:2px;border:2px solid #9ed497;border-radius:4px;animation:pulse-border 2s infinite;pointer-events:none}
+@keyframes pulse-border{0%{opacity:1}50%{opacity:.3}100%{opacity:1}}
+.win-cell{background-color:rgba(129,182,76,.35) !important}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:#1e1b18}
+::-webkit-scrollbar-thumb{background:#373431;border-radius:3px}
+html.light .board-dark{background-color:#EEEEEE !important}
+html.light{background:#f5f5f0;color:#151310}
+</style>
+</head>
+<body class="bg-background text-on-background overflow-hidden flex flex-col h-screen">
+<header class="bg-surface-container shadow-sm w-full top-0 z-50">
+<div class="flex justify-between items-center px-md py-sm max-w-container-max mx-auto h-16">
+<a href="index.html" class="flex items-center gap-2 text-on-surface hover:bg-surface-bright p-2 rounded-lg transition-all duration-200 active:scale-95">
+<span class="material-symbols-outlined">grid_4x4</span>
+<span class="font-title-md text-title-md hidden md:inline">GOMOKU</span>
+</a>
+<div class="flex items-center gap-6">
+<div class="flex flex-col items-center border-b-2 border-action-green pb-1 px-4 transition-all" id="player-x">
+<span class="font-label-caps text-label-caps text-on-surface-variant">LƯỢT X</span>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-action-green" style="font-variation-settings:'FILL' 1">close</span>
+<span class="font-title-md text-title-md" id="name-x">Người chơi 1</span>
+</div>
+</div>
+<div class="flex flex-col items-center opacity-40 grayscale px-4 transition-all" id="player-o">
+<span class="font-label-caps text-label-caps text-on-surface-variant">LƯỢT O</span>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-action-red" style="font-variation-settings:'FILL' 1">radio_button_unchecked</span>
+<span class="font-title-md text-title-md" id="name-o">Người chơi 2</span>
+</div>
+</div>
+</div>
+<a href="settings.html" class="text-on-surface hover:bg-surface-bright p-2 rounded-full transition-all duration-200 active:scale-95">
+<span class="material-symbols-outlined">settings</span></a>
+</div>
+</header>
+<main class="flex-grow flex flex-col md:flex-row max-w-container-max mx-auto w-full p-4 gap-6 overflow-auto">
+<section class="flex-grow flex items-center justify-center relative bg-surface-ebony rounded-xl shadow-xl overflow-hidden p-2 md:p-6">
+<div class="relative w-full max-w-[min(80vh,100%)] aspect-square bg-board-dark shadow-2xl rounded-sm border-4 border-surface-container-high" id="game-board-container">
+<div class="board-grid h-full w-full" id="board"></div>
+</div>
+</section>
+<aside class="hidden md:flex flex-col w-[320px] lg:w-[360px] gap-4">
+<div class="bg-surface-container-low rounded-xl p-md border border-outline-variant">
+<h3 class="font-title-md text-title-md mb-xs text-on-surface">Tỉ Số</h3>
+<div class="flex justify-between items-center">
+<div class="text-center flex-1"><div class="text-3xl font-extrabold text-action-green" id="score-x">0</div><div class="text-xs text-on-surface-variant font-label-caps">X THẮNG</div></div>
+<div class="text-2xl font-bold opacity-30 px-2">—</div>
+<div class="text-center flex-1"><div class="text-3xl font-extrabold text-action-red" id="score-o">0</div><div class="text-xs text-on-surface-variant font-label-caps">O THẮNG</div></div>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-xl flex-grow overflow-hidden flex flex-col border border-outline-variant">
+<div class="p-md border-b border-outline-variant flex justify-between items-center">
+<h3 class="font-title-md text-title-md text-on-surface">Lịch Sử Nước Đi</h3>
+<span class="bg-surface-bright px-2 py-1 rounded text-xs text-on-surface-variant" id="move-count">Nước 0</span>
+</div>
+<div class="overflow-y-auto flex-grow p-xs space-y-1" id="move-list"></div>
+</div>
+</aside>
+</main>
+<nav class="bg-surface-container-highest border-t border-outline-variant w-full z-50 flex justify-around items-center px-4 py-2 pb-safe">
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-variant rounded-lg px-6 py-2 transition-transform duration-150 active:scale-90" onclick="undoMove()">
+<span class="material-symbols-outlined">undo</span><span class="font-label-caps text-label-caps mt-1">Undo</span></button>
+<button class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-8 py-2 transition-transform duration-150 active:scale-90" onclick="restartGame()">
+<span class="material-symbols-outlined">replay</span><span class="font-label-caps text-label-caps mt-1">Restart</span></button>
+<a href="index.html" class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-variant rounded-lg px-6 py-2 transition-transform duration-150 active:scale-90">
+<span class="material-symbols-outlined">home</span><span class="font-label-caps text-label-caps mt-1">Home</span></a>
+<a href="settings.html" class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-variant rounded-lg px-6 py-2 transition-transform duration-150 active:scale-90">
+<span class="material-symbols-outlined">settings</span><span class="font-label-caps text-label-caps mt-1">Settings</span></a>
+</nav>
+<div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4" id="winner-modal">
+<div class="bg-surface-container-high rounded-2xl p-xl shadow-2xl border border-outline max-w-sm w-full text-center transform scale-95 transition-transform duration-300" id="modal-card">
+<span class="material-symbols-outlined text-6xl text-action-green mb-md" id="modal-icon" style="font-variation-settings:'FILL' 1">emoji_events</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-xs" id="modal-title">Chiến Thắng!</h2>
+<p class="text-on-surface-variant mb-lg" id="modal-desc">Người chơi X đã thắng với 5 quân liên tiếp.</p>
+<div class="flex flex-col gap-3">
+<button class="w-full bg-action-green text-on-primary py-3 rounded-xl font-bold hover:brightness-110 active:scale-95 transition-all" onclick="closeModal(true)">Chơi Lại</button>
+<button class="w-full bg-surface-variant text-on-surface py-3 rounded-xl font-bold hover:bg-surface-bright active:scale-95 transition-all" onclick="closeModal(false)">Đóng</button>
+</div>
+</div>
+</div>
+<script>
+function loadSettings(){
+  try{return JSON.parse(localStorage.getItem('gomoku_settings'))||{theme:'dark',sound:true,music:false,boardSize:15};}
+  catch(e){return {theme:'dark',sound:true,music:false,boardSize:15};}
+}
+function applyTheme(theme){
+  const html=document.documentElement;
+  if(theme==='light'){html.classList.remove('dark');html.classList.add('light');}
+  else{html.classList.add('dark');html.classList.remove('light');}
+}
+let settings=loadSettings();
+applyTheme(settings.theme);
+
+const params=new URLSearchParams(window.location.search);
+const mode=params.get('mode')||'pvp';
+if(mode==='ai'){document.getElementById('name-o').textContent='AI (Dễ)';}
+
+const SIZE=settings.boardSize||15;
+const boardEl=document.getElementById('board');
+boardEl.style.gridTemplateColumns=`repeat(${SIZE},minmax(0,1fr))`;
+
+let board=[];
+let cells=[];
+let currentPlayer='X';
+let history=[];
+let gameOver=false;
+let scoreX=0,scoreO=0;
+
+function initBoard(){
+  board=Array.from({length:SIZE},()=>Array(SIZE).fill(null));
+  cells=[];
+  boardEl.innerHTML='';
+  for(let r=0;r<SIZE;r++){
+    const row=[];
+    for(let c=0;c<SIZE;c++){
+      const cell=document.createElement('div');
+      cell.className='board-cell flex items-center justify-center';
+      cell.dataset.row=r;cell.dataset.col=c;
+      cell.addEventListener('click',()=>handleCellClick(r,c));
+      boardEl.appendChild(cell);
+      row.push(cell);
+    }
+    cells.push(row);
+  }
+  history=[];
+  currentPlayer='X';
+  gameOver=false;
+  document.getElementById('move-list').innerHTML='';
+  document.getElementById('move-count').textContent='Nước 0';
+  updateTurnUI();
+}
+
+function updateTurnUI(){
+  const playerX=document.getElementById('player-x');
+  const playerO=document.getElementById('player-o');
+  if(currentPlayer==='X'){
+    playerX.classList.remove('opacity-40','grayscale');
+    playerX.classList.add('border-b-2','border-action-green');
+    playerO.classList.add('opacity-40','grayscale');
+    playerO.classList.remove('border-b-2','border-action-red');
+  }else{
+    playerO.classList.remove('opacity-40','grayscale');
+    playerO.classList.add('border-b-2','border-action-red');
+    playerX.classList.add('opacity-40','grayscale');
+    playerX.classList.remove('border-b-2','border-action-green');
+  }
+}
+
+function placePiece(r,c,player,isLast=true){
+  board[r][c]=player;
+  const cell=cells[r][c];
+  cell.querySelectorAll('.last-move-indicator').forEach(el=>el.remove());
+  document.querySelectorAll('.last-move-indicator').forEach(el=>el.remove());
+  const piece=document.createElement('div');
+  piece.className='piece flex items-center justify-center w-full h-full';
+  if(player==='X'){
+    piece.innerHTML='<span class="material-symbols-outlined text-action-green font-bold" style="font-variation-settings:\'FILL\' 1;font-size:clamp(12px,4vw,28px)">close</span>';
+  }else{
+    piece.innerHTML='<span class="material-symbols-outlined text-action-red font-bold" style="font-variation-settings:\'FILL\' 1;font-size:clamp(12px,4vw,28px)">radio_button_unchecked</span>';
+  }
+  cell.appendChild(piece);
+  if(isLast){
+    const indicator=document.createElement('div');
+    indicator.className='last-move-indicator';
+    cell.appendChild(indicator);
+  }
+  cell.classList.add('disabled');
+}
+
+function addHistoryEntry(r,c,player,index){
+  const list=document.getElementById('move-list');
+  list.querySelectorAll('.bg-secondary-container').forEach(el=>{
+    el.classList.remove('bg-secondary-container','text-on-secondary-container','font-bold');
+    el.classList.add('hover:bg-surface-variant');
+  });
+  const colLetter=String.fromCharCode(65+c);
+  const item=document.createElement('div');
+  item.className='flex items-center gap-3 p-2 bg-secondary-container text-on-secondary-container rounded-lg';
+  item.innerHTML=`<span class="w-6 text-xs opacity-70">${index}.</span>
+  <div class="flex-grow flex items-center gap-2 font-bold">
+  <span class="material-symbols-outlined text-sm" style="font-variation-settings:'FILL' 1">${player==='X'?'close':'radio_button_unchecked'}</span>
+  <span>${colLetter}${r+1}</span></div>`;
+  list.appendChild(item);
+  list.scrollTop=list.scrollHeight;
+  document.getElementById('move-count').textContent='Nước '+index;
+}
+
+function playSound(type){
+  if(!settings.sound) return;
+}
+
+function checkWin(r,c,player){
+  const dirs=[[1,0],[0,1],[1,1],[1,-1]];
+  for(const [dr,dc] of dirs){
+    let cellsLine=[[r,c]];
+    let rr=r+dr,cc=c+dc;
+    while(rr>=0&&rr<SIZE&&cc>=0&&cc<SIZE&&board[rr][cc]===player){
+      cellsLine.push([rr,cc]);rr+=dr;cc+=dc;
+    }
+    rr=r-dr;cc=c-dc;
+    while(rr>=0&&rr<SIZE&&cc>=0&&cc<SIZE&&board[rr][cc]===player){
+      cellsLine.push([rr,cc]);rr-=dr;cc-=dc;
+    }
+    if(cellsLine.length>=5) return cellsLine;
+  }
+  return null;
+}
+
+function isDraw(){
+  for(let r=0;r<SIZE;r++) for(let c=0;c<SIZE;c++) if(!board[r][c]) return false;
+  return true;
+}
+
+function handleCellClick(r,c){
+  if(gameOver||board[r][c]) return;
+  if(mode==='ai'&&currentPlayer==='O') return;
+  doMove(r,c,currentPlayer);
+}
+
+function doMove(r,c,player){
+  placePiece(r,c,player,true);
+  history.push({r,c,player});
+  addHistoryEntry(r,c,player,history.length);
+  playSound('place');
+  const winLine=checkWin(r,c,player);
+  if(winLine){
+    endGame(player,winLine);
+    return;
+  }
+  if(isDraw()){
+    endGame(null,null);
+    return;
+  }
+  currentPlayer=currentPlayer==='X'?'O':'X';
+  updateTurnUI();
+  if(mode==='ai'&&currentPlayer==='O'&&!gameOver){
+    setTimeout(aiMove,400);
+  }
+}
+
+function undoMove(){
+  if(gameOver||history.length===0) return;
+  const steps=(mode==='ai'&&history.length>=2)?2:1;
+  for(let i=0;i<steps;i++){
+    const last=history.pop();
+    if(!last) break;
+    board[last.r][last.c]=null;
+    const cell=cells[last.r][last.c];
+    cell.innerHTML='';
+    cell.classList.remove('disabled');
+    const list=document.getElementById('move-list');
+    if(list.lastChild) list.removeChild(list.lastChild);
+  }
+  document.querySelectorAll('.last-move-indicator').forEach(el=>el.remove());
+  if(history.length>0){
+    const prev=history[history.length-1];
+    const cell=cells[prev.r][prev.c];
+    const indicator=document.createElement('div');
+    indicator.className='last-move-indicator';
+    cell.appendChild(indicator);
+    currentPlayer=prev.player==='X'?'O':'X';
+  }else{
+    currentPlayer='X';
+  }
+  document.getElementById('move-count').textContent='Nước '+history.length;
+  updateTurnUI();
+}
+
+function restartGame(){
+  initBoard();
+}
+
+function endGame(winner,winLine){
+  gameOver=true;
+  document.querySelectorAll('.board-cell').forEach(c=>c.classList.add('disabled'));
+  if(winLine){
+    winLine.forEach(([r,c])=>cells[r][c].classList.add('win-cell'));
+    if(winner==='X') scoreX++; else scoreO++;
+    document.getElementById('score-x').textContent=scoreX;
+    document.getElementById('score-o').textContent=scoreO;
+    showModal(winner);
+  }else{
+    showModal(null);
+  }
+}
+
+function showModal(winner){
+  const modal=document.getElementById('winner-modal');
+  const icon=document.getElementById('modal-icon');
+  const title=document.getElementById('modal-title');
+  const desc=document.getElementById('modal-desc');
+  if(winner){
+    icon.textContent='emoji_events';
+    icon.className='material-symbols-outlined text-6xl mb-md '+(winner==='X'?'text-action-green':'text-action-red');
+    title.textContent='Chiến Thắng!';
+    const name=winner==='X'?document.getElementById('name-x').textContent:document.getElementById('name-o').textContent;
+    desc.textContent=name+' đã thắng với 5 quân liên tiếp.';
+  }else{
+    icon.textContent='handshake';
+    icon.className='material-symbols-outlined text-6xl mb-md text-secondary';
+    title.textContent='Hòa!';
+    desc.textContent='Bàn cờ đã đầy, không ai chiến thắng.';
+  }
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+  setTimeout(()=>{document.getElementById('modal-card').classList.remove('scale-95');document.getElementById('modal-card').classList.add('scale-100');},50);
+}
+
+function closeModal(rematch){
+  const modal=document.getElementById('winner-modal');
+  document.getElementById('modal-card').classList.add('scale-95');
+  setTimeout(()=>{
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    if(rematch) restartGame();
+  },300);
+}
+
+function evaluateLine(r,c,dr,dc,player){
+  let count=1;
+  let openEnds=0;
+  let rr=r+dr,cc=c+dc;
+  while(rr>=0&&rr<SIZE&&cc>=0&&cc<SIZE&&board[rr][cc]===player){count++;rr+=dr;cc+=dc;}
+  if(rr>=0&&rr<SIZE&&cc>=0&&cc<SIZE&&!board[rr][cc]) openEnds++;
+  rr=r-dr;cc=c-dc;
+  while(rr>=0&&rr<SIZE&&cc>=0&&cc<SIZE&&board[rr][cc]===player){count++;rr-=dr;cc-=dc;}
+  if(rr>=0&&rr<SIZE&&cc>=0&&cc<SIZE&&!board[rr][cc]) openEnds++;
+  return {count,openEnds};
+}
+
+function scoreMove(r,c,player){
+  let best=0;
+  const dirs=[[1,0],[0,1],[1,1],[1,-1]];
+  for(const [dr,dc] of dirs){
+    const {count,openEnds}=evaluateLine(r,c,dr,dc,player);
+    let s=count*count;
+    if(openEnds===2) s*=2;
+    if(count>=5) s+=100000;
+    else if(count===4&&openEnds>0) s+=5000;
+    else if(count===3&&openEnds===2) s+=1000;
+    if(s>best) best=s;
+  }
+  return best;
+}
+
+function findWinningMove(player){
+  for(let r=0;r<SIZE;r++){
+    for(let c=0;c<SIZE;c++){
+      if(board[r][c]) continue;
+      board[r][c]=player;
+      const win=checkWin(r,c,player);
+      board[r][c]=null;
+      if(win) return [r,c];
+    }
+  }
+  return null;
+}
+
+function hasNeighbor(r,c){
+  for(let dr=-1;dr<=1;dr++){
+    for(let dc=-1;dc<=1;dc++){
+      if(dr===0&&dc===0) continue;
+      const rr=r+dr,cc=c+dc;
+      if(rr>=0&&rr<SIZE&&cc>=0&&cc<SIZE&&board[rr][cc]) return true;
+    }
+  }
+  return false;
+}
+
+function aiMove(){
+  if(gameOver) return;
+  let move=findWinningMove('O');
+  if(!move) move=findWinningMove('X');
+  if(!move){
+    let bestScore=-1;
+    let candidates=[];
+    let anyPlaced=false;
+    for(let r=0;r<SIZE;r++) for(let c=0;c<SIZE;c++) if(board[r][c]) anyPlaced=true;
+    if(!anyPlaced){
+      move=[Math.floor(SIZE/2),Math.floor(SIZE/2)];
+    }else{
+      for(let r=0;r<SIZE;r++){
+        for(let c=0;c<SIZE;c++){
+          if(board[r][c]||!hasNeighbor(r,c)) continue;
+          const s=scoreMove(r,c,'O')+scoreMove(r,c,'X')*0.9;
+          if(s>bestScore){bestScore=s;candidates=[[r,c]];}
+          else if(s===bestScore){candidates.push([r,c]);}
+        }
+      }
+      if(candidates.length>0){
+        move=candidates[Math.floor(Math.random()*candidates.length)];
+      }else{
+        const empty=[];
+        for(let r=0;r<SIZE;r++) for(let c=0;c<SIZE;c++) if(!board[r][c]) empty.push([r,c]);
+        move=empty[Math.floor(Math.random()*empty.length)];
+      }
+    }
+  }
+  if(move) doMove(move[0],move[1],'O');
+}
+
+initBoard();
+</script>
+</body>
+</html>
