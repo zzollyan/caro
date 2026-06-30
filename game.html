@@ -59,58 +59,75 @@ tailwind.config = {
 }
 </script>
 <style>
-body{min-height:max(884px,100dvh);font-family:'Inter',sans-serif}
+html,body{height:100%}
+body{font-family:'Inter',sans-serif}
 .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
 .board-grid{display:grid;background-color:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)}
-.board-cell{position:relative;border:.5px solid rgba(255,255,255,.1);transition:background-color .15s ease;cursor:pointer}
+.board-cell{position:relative;border:.5px solid rgba(255,255,255,.1);transition:background-color .15s ease;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .board-cell:hover{background-color:rgba(129,182,76,.15)}
 .board-cell.disabled{cursor:not-allowed}
-.piece{animation:piece-drop .2s cubic-bezier(.175,.885,.32,1.275) forwards;user-select:none}
-@keyframes piece-drop{0%{transform:scale(1.5);opacity:0}100%{transform:scale(1);opacity:1}}
-.last-move-indicator{position:absolute;inset:2px;border:2px solid #9ed497;border-radius:4px;animation:pulse-border 2s infinite;pointer-events:none}
+.piece{animation:piece-drop .18s cubic-bezier(.175,.885,.32,1.275) forwards;user-select:none;line-height:1;display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+@keyframes piece-drop{0%{transform:scale(1.6);opacity:0}100%{transform:scale(1);opacity:1}}
+.last-move-indicator{position:absolute;inset:8%;border:2px solid #9ed497;border-radius:4px;animation:pulse-border 2s infinite;pointer-events:none;z-index:2}
 @keyframes pulse-border{0%{opacity:1}50%{opacity:.3}100%{opacity:1}}
 .win-cell{background-color:rgba(129,182,76,.35) !important}
+.win-cell .piece{animation:win-bounce .6s ease-in-out infinite alternate}
+@keyframes win-bounce{0%{transform:scale(1)}100%{transform:scale(1.15)}}
 ::-webkit-scrollbar{width:6px}
 ::-webkit-scrollbar-track{background:#1e1b18}
 ::-webkit-scrollbar-thumb{background:#373431;border-radius:3px}
 html.light .board-dark{background-color:#EEEEEE !important}
 html.light{background:#f5f5f0;color:#151310}
+#game-board-container{flex-shrink:0}
+.confetti{position:absolute;top:-10px;width:8px;height:14px;opacity:0.9;animation:confetti-fall linear forwards}
+@keyframes confetti-fall{to{transform:translateY(420px) rotate(540deg);opacity:0}}
+.diff-select{background-color:#262421;color:#e8e1dc;border:1px solid #41493f}
 </style>
 </head>
-<body class="bg-background text-on-background overflow-hidden flex flex-col h-screen">
-<header class="bg-surface-container shadow-sm w-full top-0 z-50">
-<div class="flex justify-between items-center px-md py-sm max-w-container-max mx-auto h-16">
-<a href="index.html" class="flex items-center gap-2 text-on-surface hover:bg-surface-bright p-2 rounded-lg transition-all duration-200 active:scale-95">
+<body class="bg-background text-on-background flex flex-col h-screen overflow-hidden">
+<header class="bg-surface-container shadow-sm w-full top-0 z-50 flex-shrink-0">
+<div class="flex justify-between items-center px-md py-sm max-w-container-max mx-auto h-16 gap-2">
+<a href="index.html" class="flex items-center gap-2 text-on-surface hover:bg-surface-bright p-2 rounded-lg transition-all duration-200 active:scale-95 flex-shrink-0">
 <span class="material-symbols-outlined">grid_4x4</span>
 <span class="font-title-md text-title-md hidden md:inline">GOMOKU</span>
 </a>
-<div class="flex items-center gap-6">
-<div class="flex flex-col items-center border-b-2 border-action-green pb-1 px-4 transition-all" id="player-x">
+<div class="flex items-center gap-3 md:gap-6 overflow-hidden">
+<div class="flex flex-col items-center border-b-2 border-action-green pb-1 px-2 md:px-4 transition-all flex-shrink-0" id="player-x">
 <span class="font-label-caps text-label-caps text-on-surface-variant">LƯỢT X</span>
 <div class="flex items-center gap-2">
 <span class="material-symbols-outlined text-action-green" style="font-variation-settings:'FILL' 1">close</span>
-<span class="font-title-md text-title-md" id="name-x">Người chơi 1</span>
+<span class="font-title-md text-title-md hidden sm:inline" id="name-x">Người chơi 1</span>
 </div>
 </div>
-<div class="flex flex-col items-center opacity-40 grayscale px-4 transition-all" id="player-o">
+<div class="flex flex-col items-center opacity-40 grayscale px-2 md:px-4 transition-all flex-shrink-0" id="player-o">
 <span class="font-label-caps text-label-caps text-on-surface-variant">LƯỢT O</span>
 <div class="flex items-center gap-2">
 <span class="material-symbols-outlined text-action-red" style="font-variation-settings:'FILL' 1">radio_button_unchecked</span>
-<span class="font-title-md text-title-md" id="name-o">Người chơi 2</span>
+<span class="font-title-md text-title-md hidden sm:inline" id="name-o">Người chơi 2</span>
 </div>
 </div>
+<select id="ai-difficulty" class="diff-select hidden text-xs rounded-lg px-2 py-1 flex-shrink-0">
+<option value="easy">AI: Dễ</option>
+<option value="normal">AI: Bình thường</option>
+<option value="hard">AI: Khó</option>
+<option value="master">AI: Bậc thầy</option>
+</select>
 </div>
+<div class="flex items-center gap-1 flex-shrink-0">
+<a href="skins.html" class="text-on-surface hover:bg-surface-bright p-2 rounded-full transition-all duration-200 active:scale-95" title="Hình quân cờ">
+<span class="material-symbols-outlined">style</span></a>
 <a href="settings.html" class="text-on-surface hover:bg-surface-bright p-2 rounded-full transition-all duration-200 active:scale-95">
 <span class="material-symbols-outlined">settings</span></a>
 </div>
+</div>
 </header>
-<main class="flex-grow flex flex-col md:flex-row max-w-container-max mx-auto w-full p-4 gap-6 overflow-auto">
-<section class="flex-grow flex items-center justify-center relative bg-surface-ebony rounded-xl shadow-xl overflow-hidden p-2 md:p-6">
-<div class="relative w-full max-w-[min(80vh,100%)] aspect-square bg-board-dark shadow-2xl rounded-sm border-4 border-surface-container-high" id="game-board-container">
+<main class="flex-grow flex flex-col md:flex-row max-w-container-max mx-auto w-full p-2 md:p-4 gap-4 min-h-0 overflow-hidden">
+<section id="board-section" class="flex-grow flex items-center justify-center relative bg-surface-ebony rounded-xl shadow-xl overflow-hidden p-2 min-h-0 min-w-0">
+<div class="relative bg-board-dark shadow-2xl rounded-sm border-4 border-surface-container-high" id="game-board-container">
 <div class="board-grid h-full w-full" id="board"></div>
 </div>
 </section>
-<aside class="hidden md:flex flex-col w-[320px] lg:w-[360px] gap-4">
+<aside class="hidden md:flex flex-col w-[300px] lg:w-[340px] gap-4 flex-shrink-0">
 <div class="bg-surface-container-low rounded-xl p-md border border-outline-variant">
 <h3 class="font-title-md text-title-md mb-xs text-on-surface">Tỉ Số</h3>
 <div class="flex justify-between items-center">
@@ -119,7 +136,7 @@ html.light{background:#f5f5f0;color:#151310}
 <div class="text-center flex-1"><div class="text-3xl font-extrabold text-action-red" id="score-o">0</div><div class="text-xs text-on-surface-variant font-label-caps">O THẮNG</div></div>
 </div>
 </div>
-<div class="bg-surface-container-low rounded-xl flex-grow overflow-hidden flex flex-col border border-outline-variant">
+<div class="bg-surface-container-low rounded-xl flex-grow overflow-hidden flex flex-col border border-outline-variant min-h-0">
 <div class="p-md border-b border-outline-variant flex justify-between items-center">
 <h3 class="font-title-md text-title-md text-on-surface">Lịch Sử Nước Đi</h3>
 <span class="bg-surface-bright px-2 py-1 rounded text-xs text-on-surface-variant" id="move-count">Nước 0</span>
@@ -128,7 +145,7 @@ html.light{background:#f5f5f0;color:#151310}
 </div>
 </aside>
 </main>
-<nav class="bg-surface-container-highest border-t border-outline-variant w-full z-50 flex justify-around items-center px-4 py-2 pb-safe">
+<nav class="bg-surface-container-highest border-t border-outline-variant w-full z-50 flex justify-around items-center px-4 py-2 pb-safe flex-shrink-0">
 <button class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-variant rounded-lg px-6 py-2 transition-transform duration-150 active:scale-90" onclick="undoMove()">
 <span class="material-symbols-outlined">undo</span><span class="font-label-caps text-label-caps mt-1">Undo</span></button>
 <button class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-8 py-2 transition-transform duration-150 active:scale-90" onclick="restartGame()">
@@ -139,21 +156,24 @@ html.light{background:#f5f5f0;color:#151310}
 <span class="material-symbols-outlined">settings</span><span class="font-label-caps text-label-caps mt-1">Settings</span></a>
 </nav>
 <div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4" id="winner-modal">
-<div class="bg-surface-container-high rounded-2xl p-xl shadow-2xl border border-outline max-w-sm w-full text-center transform scale-95 transition-transform duration-300" id="modal-card">
-<span class="material-symbols-outlined text-6xl text-action-green mb-md" id="modal-icon" style="font-variation-settings:'FILL' 1">emoji_events</span>
-<h2 class="font-headline-lg text-headline-lg text-on-surface mb-xs" id="modal-title">Chiến Thắng!</h2>
-<p class="text-on-surface-variant mb-lg" id="modal-desc">Người chơi X đã thắng với 5 quân liên tiếp.</p>
-<div class="flex flex-col gap-3">
+<div class="bg-surface-container-high rounded-2xl p-xl shadow-2xl border border-outline max-w-sm w-full text-center transform scale-95 transition-transform duration-300 relative overflow-hidden" id="modal-card">
+<div id="confetti-layer" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
+<span class="material-symbols-outlined text-6xl text-action-green mb-md relative z-10" id="modal-icon" style="font-variation-settings:'FILL' 1">emoji_events</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-xs relative z-10" id="modal-title">Chiến Thắng!</h2>
+<p class="text-on-surface-variant mb-lg relative z-10" id="modal-desc">Người chơi X đã thắng với 5 quân liên tiếp.</p>
+<div class="flex flex-col gap-3 relative z-10">
 <button class="w-full bg-action-green text-on-primary py-3 rounded-xl font-bold hover:brightness-110 active:scale-95 transition-all" onclick="closeModal(true)">Chơi Lại</button>
 <button class="w-full bg-surface-variant text-on-surface py-3 rounded-xl font-bold hover:bg-surface-bright active:scale-95 transition-all" onclick="closeModal(false)">Đóng</button>
 </div>
 </div>
 </div>
 <script>
+const DEFAULT_SETTINGS={theme:'dark',sound:true,music:false,boardSize:15,pieceStyle:'classic',aiDifficulty:'easy'};
 function loadSettings(){
-  try{return JSON.parse(localStorage.getItem('gomoku_settings'))||{theme:'dark',sound:true,music:false,boardSize:15};}
-  catch(e){return {theme:'dark',sound:true,music:false,boardSize:15};}
+  try{return Object.assign({},DEFAULT_SETTINGS,JSON.parse(localStorage.getItem('gomoku_settings'))||{});}
+  catch(e){return Object.assign({},DEFAULT_SETTINGS);}
 }
+function saveSettings(s){localStorage.setItem('gomoku_settings',JSON.stringify(s));}
 function applyTheme(theme){
   const html=document.documentElement;
   if(theme==='light'){html.classList.remove('dark');html.classList.add('light');}
@@ -164,11 +184,45 @@ applyTheme(settings.theme);
 
 const params=new URLSearchParams(window.location.search);
 const mode=params.get('mode')||'pvp';
-if(mode==='ai'){document.getElementById('name-o').textContent='AI (Dễ)';}
+if(mode==='ai'){
+  document.getElementById('name-o').textContent='AI';
+  const diffSelect=document.getElementById('ai-difficulty');
+  diffSelect.classList.remove('hidden');
+  diffSelect.value=settings.aiDifficulty;
+  diffSelect.addEventListener('change',()=>{
+    settings.aiDifficulty=diffSelect.value;
+    saveSettings(settings);
+  });
+}
+
+const PIECE_STYLES={
+  classic:{x:'<span class="material-symbols-outlined" style="font-variation-settings:\'FILL\' 1;color:#81B64C">close</span>',o:'<span class="material-symbols-outlined" style="font-variation-settings:\'FILL\' 1;color:#E74C3C">radio_button_unchecked</span>'},
+  stones:{x:'<span class="material-symbols-outlined" style="font-variation-settings:\'FILL\' 1;color:#1a1a1a;text-shadow:0 1px 2px rgba(0,0,0,.5)">circle</span>',o:'<span class="material-symbols-outlined" style="font-variation-settings:\'FILL\' 0;color:#f5f5f0;-webkit-text-stroke:2px #888">circle</span>'},
+  animals:{x:'🐯',o:'🐼'},
+  gems:{x:'💎',o:'🔷'}
+};
+function pieceMarkup(player){
+  const style=PIECE_STYLES[settings.pieceStyle]||PIECE_STYLES.classic;
+  return player==='X'?style.x:style.o;
+}
 
 const SIZE=settings.boardSize||15;
 const boardEl=document.getElementById('board');
 boardEl.style.gridTemplateColumns=`repeat(${SIZE},minmax(0,1fr))`;
+const boardSection=document.getElementById('board-section');
+const boardContainer=document.getElementById('game-board-container');
+
+function fitBoard(){
+  const w=boardSection.clientWidth-16;
+  const h=boardSection.clientHeight-16;
+  const size=Math.max(180,Math.min(w,h));
+  boardContainer.style.width=size+'px';
+  boardContainer.style.height=size+'px';
+  const cellSize=(size-8)/SIZE;
+  boardEl.style.setProperty('--cell-font',(cellSize*0.62)+'px');
+  document.querySelectorAll('.piece').forEach(p=>{p.style.fontSize='var(--cell-font)';});
+}
+window.addEventListener('resize',fitBoard);
 
 let board=[];
 let cells=[];
@@ -185,7 +239,7 @@ function initBoard(){
     const row=[];
     for(let c=0;c<SIZE;c++){
       const cell=document.createElement('div');
-      cell.className='board-cell flex items-center justify-center';
+      cell.className='board-cell';
       cell.dataset.row=r;cell.dataset.col=c;
       cell.addEventListener('click',()=>handleCellClick(r,c));
       boardEl.appendChild(cell);
@@ -199,6 +253,7 @@ function initBoard(){
   document.getElementById('move-list').innerHTML='';
   document.getElementById('move-count').textContent='Nước 0';
   updateTurnUI();
+  fitBoard();
 }
 
 function updateTurnUI(){
@@ -220,15 +275,11 @@ function updateTurnUI(){
 function placePiece(r,c,player,isLast=true){
   board[r][c]=player;
   const cell=cells[r][c];
-  cell.querySelectorAll('.last-move-indicator').forEach(el=>el.remove());
   document.querySelectorAll('.last-move-indicator').forEach(el=>el.remove());
   const piece=document.createElement('div');
-  piece.className='piece flex items-center justify-center w-full h-full';
-  if(player==='X'){
-    piece.innerHTML='<span class="material-symbols-outlined text-action-green font-bold" style="font-variation-settings:\'FILL\' 1;font-size:clamp(12px,4vw,28px)">close</span>';
-  }else{
-    piece.innerHTML='<span class="material-symbols-outlined text-action-red font-bold" style="font-variation-settings:\'FILL\' 1;font-size:clamp(12px,4vw,28px)">radio_button_unchecked</span>';
-  }
+  piece.className='piece';
+  piece.style.fontSize='var(--cell-font)';
+  piece.innerHTML=pieceMarkup(player);
   cell.appendChild(piece);
   if(isLast){
     const indicator=document.createElement('div');
@@ -256,22 +307,14 @@ function addHistoryEntry(r,c,player,index){
   document.getElementById('move-count').textContent='Nước '+index;
 }
 
-function playSound(type){
-  if(!settings.sound) return;
-}
-
 function checkWin(r,c,player){
   const dirs=[[1,0],[0,1],[1,1],[1,-1]];
   for(const [dr,dc] of dirs){
     let cellsLine=[[r,c]];
     let rr=r+dr,cc=c+dc;
-    while(rr>=0&&rr<SIZE&&cc>=0&&cc<SIZE&&board[rr][cc]===player){
-      cellsLine.push([rr,cc]);rr+=dr;cc+=dc;
-    }
+    while(rr>=0&&rr<SIZE&&cc>=0&&cc<SIZE&&board[rr][cc]===player){cellsLine.push([rr,cc]);rr+=dr;cc+=dc;}
     rr=r-dr;cc=c-dc;
-    while(rr>=0&&rr<SIZE&&cc>=0&&cc<SIZE&&board[rr][cc]===player){
-      cellsLine.push([rr,cc]);rr-=dr;cc-=dc;
-    }
+    while(rr>=0&&rr<SIZE&&cc>=0&&cc<SIZE&&board[rr][cc]===player){cellsLine.push([rr,cc]);rr-=dr;cc-=dc;}
     if(cellsLine.length>=5) return cellsLine;
   }
   return null;
@@ -292,21 +335,12 @@ function doMove(r,c,player){
   placePiece(r,c,player,true);
   history.push({r,c,player});
   addHistoryEntry(r,c,player,history.length);
-  playSound('place');
   const winLine=checkWin(r,c,player);
-  if(winLine){
-    endGame(player,winLine);
-    return;
-  }
-  if(isDraw()){
-    endGame(null,null);
-    return;
-  }
+  if(winLine){endGame(player,winLine);return;}
+  if(isDraw()){endGame(null,null);return;}
   currentPlayer=currentPlayer==='X'?'O':'X';
   updateTurnUI();
-  if(mode==='ai'&&currentPlayer==='O'&&!gameOver){
-    setTimeout(aiMove,400);
-  }
+  if(mode==='ai'&&currentPlayer==='O'&&!gameOver){setTimeout(aiMove,350);}
 }
 
 function undoMove(){
@@ -337,9 +371,7 @@ function undoMove(){
   updateTurnUI();
 }
 
-function restartGame(){
-  initBoard();
-}
+function restartGame(){initBoard();}
 
 function endGame(winner,winLine){
   gameOver=true;
@@ -355,6 +387,21 @@ function endGame(winner,winLine){
   }
 }
 
+function spawnConfetti(){
+  const layer=document.getElementById('confetti-layer');
+  layer.innerHTML='';
+  const colors=['#81B64C','#9fd668','#E74C3C','#f5d76e','#5dade2'];
+  for(let i=0;i<40;i++){
+    const c=document.createElement('div');
+    c.className='confetti';
+    c.style.left=Math.random()*100+'%';
+    c.style.backgroundColor=colors[Math.floor(Math.random()*colors.length)];
+    c.style.animationDuration=(1+Math.random()*1.5)+'s';
+    c.style.animationDelay=(Math.random()*0.4)+'s';
+    layer.appendChild(c);
+  }
+}
+
 function showModal(winner){
   const modal=document.getElementById('winner-modal');
   const icon=document.getElementById('modal-icon');
@@ -362,15 +409,17 @@ function showModal(winner){
   const desc=document.getElementById('modal-desc');
   if(winner){
     icon.textContent='emoji_events';
-    icon.className='material-symbols-outlined text-6xl mb-md '+(winner==='X'?'text-action-green':'text-action-red');
+    icon.className='material-symbols-outlined text-6xl mb-md relative z-10 '+(winner==='X'?'text-action-green':'text-action-red');
     title.textContent='Chiến Thắng!';
     const name=winner==='X'?document.getElementById('name-x').textContent:document.getElementById('name-o').textContent;
     desc.textContent=name+' đã thắng với 5 quân liên tiếp.';
+    spawnConfetti();
   }else{
     icon.textContent='handshake';
-    icon.className='material-symbols-outlined text-6xl mb-md text-secondary';
+    icon.className='material-symbols-outlined text-6xl mb-md relative z-10 text-secondary';
     title.textContent='Hòa!';
     desc.textContent='Bàn cờ đã đầy, không ai chiến thắng.';
+    document.getElementById('confetti-layer').innerHTML='';
   }
   modal.classList.remove('hidden');
   modal.classList.add('flex');
@@ -388,8 +437,7 @@ function closeModal(rematch){
 }
 
 function evaluateLine(r,c,dr,dc,player){
-  let count=1;
-  let openEnds=0;
+  let count=1;let openEnds=0;
   let rr=r+dr,cc=c+dc;
   while(rr>=0&&rr<SIZE&&cc>=0&&cc<SIZE&&board[rr][cc]===player){count++;rr+=dr;cc+=dc;}
   if(rr>=0&&rr<SIZE&&cc>=0&&cc<SIZE&&!board[rr][cc]) openEnds++;
@@ -427,9 +475,9 @@ function findWinningMove(player){
   return null;
 }
 
-function hasNeighbor(r,c){
-  for(let dr=-1;dr<=1;dr++){
-    for(let dc=-1;dc<=1;dc++){
+function hasNeighbor(r,c,dist){
+  for(let dr=-dist;dr<=dist;dr++){
+    for(let dc=-dist;dc<=dist;dc++){
       if(dr===0&&dc===0) continue;
       const rr=r+dr,cc=c+dc;
       if(rr>=0&&rr<SIZE&&cc>=0&&cc<SIZE&&board[rr][cc]) return true;
@@ -438,33 +486,130 @@ function hasNeighbor(r,c){
   return false;
 }
 
+function getCandidates(limit){
+  const seen=new Set();
+  const list=[];
+  let anyStone=false;
+  for(let r=0;r<SIZE;r++){
+    for(let c=0;c<SIZE;c++){
+      if(board[r][c]){anyStone=true;continue;}
+      if(!hasNeighbor(r,c,2)) continue;
+      const key=r*1000+c;
+      if(seen.has(key)) continue;
+      seen.add(key);
+      const s=scoreMove(r,c,'O')+scoreMove(r,c,'X')*0.92;
+      list.push({r,c,s});
+    }
+  }
+  if(!anyStone){
+    const mid=Math.floor(SIZE/2);
+    return [{r:mid,c:mid,s:0}];
+  }
+  list.sort((a,b)=>b.s-a.s);
+  return list.slice(0,limit);
+}
+
+function patternScore(len,openEnds){
+  if(len>=5) return 1000000;
+  if(len===4) return openEnds===2?100000:10000;
+  if(len===3) return openEnds===2?5000:500;
+  if(len===2) return openEnds===2?200:50;
+  if(len===1) return openEnds===2?10:5;
+  return 0;
+}
+
+function lineScore(player){
+  let total=0;
+  const dirs=[[1,0],[0,1],[1,1],[1,-1]];
+  for(let r=0;r<SIZE;r++){
+    for(let c=0;c<SIZE;c++){
+      if(board[r][c]!==player) continue;
+      for(const [dr,dc] of dirs){
+        const pr=r-dr,pc=c-dc;
+        if(pr>=0&&pr<SIZE&&pc>=0&&pc<SIZE&&board[pr][pc]===player) continue;
+        let len=0;let rr=r,cc=c;
+        while(rr>=0&&rr<SIZE&&cc>=0&&cc<SIZE&&board[rr][cc]===player){len++;rr+=dr;cc+=dc;}
+        let openEnds=0;
+        if(pr>=0&&pr<SIZE&&pc>=0&&pc<SIZE&&!board[pr][pc]) openEnds++;
+        if(rr>=0&&rr<SIZE&&cc>=0&&cc<SIZE&&!board[rr][cc]) openEnds++;
+        total+=patternScore(len,openEnds);
+      }
+    }
+  }
+  return total;
+}
+
+function evaluateBoard(){return lineScore('O')-lineScore('X');}
+
+function minimax(depth,isMax,alpha,beta,branch){
+  if(depth===0) return evaluateBoard();
+  const candidates=getCandidates(branch);
+  if(candidates.length===0) return evaluateBoard();
+  if(isMax){
+    let best=-Infinity;
+    for(const cand of candidates){
+      board[cand.r][cand.c]='O';
+      const win=checkWin(cand.r,cand.c,'O');
+      let val;
+      if(win) val=1000000+depth;
+      else val=minimax(depth-1,false,alpha,beta,branch);
+      board[cand.r][cand.c]=null;
+      if(val>best) best=val;
+      if(best>alpha) alpha=best;
+      if(beta<=alpha) break;
+    }
+    return best;
+  }else{
+    let best=Infinity;
+    for(const cand of candidates){
+      board[cand.r][cand.c]='X';
+      const win=checkWin(cand.r,cand.c,'X');
+      let val;
+      if(win) val=-1000000-depth;
+      else val=minimax(depth-1,true,alpha,beta,branch);
+      board[cand.r][cand.c]=null;
+      if(val<best) best=val;
+      if(best<beta) beta=best;
+      if(beta<=alpha) break;
+    }
+    return best;
+  }
+}
+
+const DIFFICULTY_CONFIG={
+  easy:{depth:0,branch:6},
+  normal:{depth:1,branch:10},
+  hard:{depth:2,branch:8},
+  master:{depth:3,branch:6}
+};
+
 function aiMove(){
   if(gameOver) return;
   let move=findWinningMove('O');
   if(!move) move=findWinningMove('X');
   if(!move){
-    let bestScore=-1;
-    let candidates=[];
-    let anyPlaced=false;
-    for(let r=0;r<SIZE;r++) for(let c=0;c<SIZE;c++) if(board[r][c]) anyPlaced=true;
-    if(!anyPlaced){
-      move=[Math.floor(SIZE/2),Math.floor(SIZE/2)];
+    const cfg=DIFFICULTY_CONFIG[settings.aiDifficulty]||DIFFICULTY_CONFIG.easy;
+    if(cfg.depth===0){
+      const candidates=getCandidates(Math.max(cfg.branch,4));
+      const topScore=candidates[0].s;
+      const topMoves=candidates.filter(c=>c.s>=topScore*0.8);
+      const pick=topMoves[Math.floor(Math.random()*topMoves.length)];
+      move=[pick.r,pick.c];
     }else{
-      for(let r=0;r<SIZE;r++){
-        for(let c=0;c<SIZE;c++){
-          if(board[r][c]||!hasNeighbor(r,c)) continue;
-          const s=scoreMove(r,c,'O')+scoreMove(r,c,'X')*0.9;
-          if(s>bestScore){bestScore=s;candidates=[[r,c]];}
-          else if(s===bestScore){candidates.push([r,c]);}
-        }
+      const candidates=getCandidates(Math.max(cfg.branch+6,12));
+      let bestScore=-Infinity;let bestMoves=[];
+      for(const cand of candidates){
+        board[cand.r][cand.c]='O';
+        const win=checkWin(cand.r,cand.c,'O');
+        let val;
+        if(win) val=1000000;
+        else val=minimax(cfg.depth-1,false,-Infinity,Infinity,cfg.branch);
+        board[cand.r][cand.c]=null;
+        if(val>bestScore){bestScore=val;bestMoves=[cand];}
+        else if(val===bestScore){bestMoves.push(cand);}
       }
-      if(candidates.length>0){
-        move=candidates[Math.floor(Math.random()*candidates.length)];
-      }else{
-        const empty=[];
-        for(let r=0;r<SIZE;r++) for(let c=0;c<SIZE;c++) if(!board[r][c]) empty.push([r,c]);
-        move=empty[Math.floor(Math.random()*empty.length)];
-      }
+      const pick=bestMoves[Math.floor(Math.random()*bestMoves.length)]||candidates[0];
+      move=[pick.r,pick.c];
     }
   }
   if(move) doMove(move[0],move[1],'O');

@@ -133,6 +133,14 @@ tailwind.config = {
 </button>
 </div>
 </div>
+<div class="px-md py-sm bg-surface-container-high/40"><span class="font-label-caps text-label-caps text-secondary uppercase">Hình Ảnh</span></div>
+<a href="skins.html" class="flex items-center justify-between px-md py-lg border-b border-outline-variant/10 hover:bg-surface-bright/5 transition-colors group">
+<div class="flex items-center gap-4">
+<div class="p-2 rounded-lg bg-surface-container-highest text-primary"><span class="material-symbols-outlined">style</span></div>
+<div><p class="font-title-md text-title-md">Hình quân cờ</p><p class="font-body-sm text-body-sm text-on-surface-variant">Tùy chỉnh hình quân cờ thay vì X/O cơ bản</p></div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</a>
 </div>
 <div class="p-md bg-surface-container-highest/20 flex justify-end gap-md">
 <button id="reset-defaults" class="px-lg py-sm rounded-lg font-title-md text-title-md text-on-surface-variant hover:bg-surface-variant transition-colors active:scale-95">Reset Defaults</button>
@@ -148,7 +156,7 @@ tailwind.config = {
 <a href="help.html" class="flex flex-col items-center justify-center text-on-surface-variant active:scale-90 transition-transform duration-150"><span class="material-symbols-outlined">help</span><span class="font-label-caps text-label-caps">Help</span></a>
 </nav>
 <script>
-const DEFAULT_SETTINGS={theme:'dark',sound:true,music:false,boardSize:15};
+const DEFAULT_SETTINGS={theme:'dark',sound:true,music:false,boardSize:15,pieceStyle:'classic',aiDifficulty:'easy'};
 function loadSettings(){
   try{return JSON.parse(localStorage.getItem('gomoku_settings'))||{...DEFAULT_SETTINGS};}
   catch(e){return {...DEFAULT_SETTINGS};}
